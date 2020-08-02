@@ -1,0 +1,59 @@
+ls()
+getwd()
+
+lifex_m <- read.csv(file.choose(),header=TRUE,na.strings="-",stringsAsFactors=FALSE)
+water_m <- read.csv(file.choose(),header=TRUE,na.strings="-",stringsAsFactors=FALSE)
+project <- merge(lifex_m,water_m,by.x=c("COUNTRY","YEAR"),by.y=c("COUNTRY","YEAR"),all = TRUE)
+
+write.csv(x=project,file="/Users/bryanburkey/Documents/MIS/DATASETS/WRITE_CSV/CAPSTONE_PROJECT/project.csv",na="--",quote=FALSE,row.names=FALSE)
+write.csv(x=lifex_m,file="/Users/bryanburkey/Documents/MIS/DATASETS/WRITE_CSV/CAPSTONE_PROJECT/lifex_m.csv",na="--",quote=FALSE,row.names=FALSE)
+write.csv(x=water_m,file="/Users/bryanburkey/Documents/MIS/DATASETS/WRITE_CSV/CAPSTONE_PROJECT/water_m.csv",na="--",quote=FALSE,row.names=FALSE)
+
+str(project)
+
+project_noNA <- na.omit(project)
+write.csv(x=project_noNA,file="/Users/bryanburkey/Documents/MIS/DATASETS/WRITE_CSV/CAPSTONE_PROJECT/project_noNA.csv",na="",quote=FALSE,row.names=FALSE)
+
+colnames(project_noNA) <- c("COUNTRY","YEAR","LIFEX","ADMORT","INFMORT","U5MORT","ISO3","POP_1000","URBAN_PCT","ALB","LIM","UNIMPROV","SURFACE")
+
+colnames(project) <- c("COUNTRY","YEAR","LIFEX","ADMORT","INFMORT","U5MORT","ISO3","POP_1000","URBAN_PCT","ALB","LIM","UNIMPROV","SURFACE")
+
+write.csv(x=project_noNA,file="/Users/bryanburkey/Documents/MIS/DATASETS/WRITE_CSV/CAPSTONE_PROJECT/project_noNA.csv",na="",quote=FALSE,row.names=FALSE)
+write.csv(x=project,file="/Users/bryanburkey/Documents/MIS/DATASETS/WRITE_CSV/CAPSTONE_PROJECT/project.csv",na="",quote=FALSE,row.names=FALSE)
+
+nrow(lifex_m)
+nrow(water_m)
+nrow(project_noNA)
+str(project_noNA)
+
+help(lm)
+
+# discovered errors in the Kaggle life expectancy data with these countries so I removed them
+project_noNA_noBD <- project_noNA[project_noNA$ISO3!="CHN" & project_noNA$ISO3!="COD" & project_noNA$ISO3!="ETH" & project_noNA$ISO3!="IND" & project_noNA$ISO3!="IDN" & project_noNA$ISO3!="NGA" & project_noNA$ISO3!="PAK" & project_noNA$ISO3!="BGD",]
+
+write.csv(x=project_noNA_noBD,file="/Users/bryanburkey/Documents/MIS/DATASETS/WRITE_CSV/CAPSTONE_PROJECT/project_noNA_noBD.csv",na="",quote=FALSE,row.names=FALSE)
+
+cor.test(project_noNA$ALB,project_noNA$LIFEX,alternative=c("two.sided"),method=c("spearman"))
+cor.test(project_noNA$ALB,project_noNA$INFMORT,alternative=c("two.sided"),method=c("spearman"))
+cor.test(project_noNA$ALB,project_noNA$U5MORT,alternative=c("two.sided"),method=c("spearman"))
+
+
+cor.test(project_noNA_noBD$ALB,project_noNA$LIFEX,alternative=c("two.sided"),method=c("spearman"))
+cor.test(project_noNA_noBD$ALB,project_noNA_noBD$LIFEX,alternative=c("two.sided"),method=c("spearman"))
+cor.test(project_noNA_noBD$ALB,project_noNA_noBD$LIFEX,alternative=c("two.sided"),method=c("spearman"))
+
+cor.test(project_noNA_noBD$ALB,project_noNA_noBD$LIFEX,alternative=c("two.sided"),method=c("pearson"))
+cor.test(project_noNA_noBD$ALB,project_noNA_noBD$INFMORT,alternative=c("two.sided"),method=c("pearson"))
+cor.test(project_noNA_noBD$ALB,project_noNA_noBD$U5MORT,alternative=c("two.sided"),method=c("pearson"))
+
+plot(project_noNA_noBD$ALB,project_noNA_noBD$LIFEX)
+trendlineALB_LIFEX <- lm(LIFEX~ALB,data=project_noNA_noBD)
+abline(trendlineALB_LIFEX,lwd=2)
+
+plot(project_noNA_noBD$ALB,project_noNA_noBD$INFMORT)
+trendlineALB_INFMORT <- lm(INFMORT~ALB,data=project_noNA_noBD)
+abline(trendlineALB_INFMORT,lwd=2)
+
+plot(project_noNA_noBD$ALB,project_noNA_noBD$U5MORT)
+trendlineALB_U5MORT <- lm(U5MORT~ALB,data=project_noNA_noBD)
+abline(trendlineALB_U5MORT,lwd=2)
